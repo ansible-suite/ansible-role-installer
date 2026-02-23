@@ -1,0 +1,11 @@
+installer_installer_file: "{{ installer_source_dir }}/ansible_installer"
+installer_installed_file: "{{ installer_target_dir }}/ansible_installed"
+installer_force_install: false
+installer_target_remove: false
+installer_target_remove_dir: "{{ installer_target_dir }}"
+installer_chdir: "{{ installer_source_dir }}"
+installer_version: false
+installer_installed_version: false
+
+__installer_version: false
+__installer_installed_version: false

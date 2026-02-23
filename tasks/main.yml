@@ -1,0 +1,11 @@
+- name: Check facts
+  ansible.builtin.import_tasks: facts.yml
+  tags:
+    - installer
+    - installer_facts
+
+- name: Perform the installation
+  ansible.builtin.include_tasks: install.yml
+  when: __installer_install
+  tags:
+    - installer

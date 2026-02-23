@@ -1,0 +1,9 @@
+- name: Run the installer
+  ansible.builtin.command:
+    cmd: "{{ installer_cmd }}"
+    chdir: "{{ installer_chdir }}"
+  changed_when: true
+  tags:
+    - installer
+    - installer_install
+    - installer_cmd

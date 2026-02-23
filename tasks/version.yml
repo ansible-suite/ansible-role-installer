@@ -1,0 +1,43 @@
+- name: Set the {{ __installer_version_name }} version fact based on a variable
+  ansible.builtin.set_fact:
+    "{{ __installer_version_fact }}": "{{ lookup('vars', __installer_version_var) }}"
+  when: lookup('vars', __installer_version_var) != false
+  tags:
+    - installer
+    - installer_version
+
+- name: Determine the {{ __installer_version_name }} version from a file
+  when: not lookup('vars', __installer_version_var)
+  block:
+    - name: Check whether "{{ __installer_version_file }}" exists
+      ansible.builtin.stat:
+        path: "{{ __installer_version_file }}"
+      register: version_file_stat
+      tags:
+        - installer
+        - installer_version
+
+    - when: version_file_stat.stat.exists
+      block:
+        - name: Slurp the file "{{ __installer_version_file }}"
+          ansible.builtin.slurp:
+            path: "{{ __installer_version_file }}"
+          register: version_file_slurp
+          tags:
+            - installer
+            - installer_version
+
+        - name: Set the {{ __installer_version_name }} version fact based on the contents of the file
+          ansible.builtin.set_fact:
+            "{{ __installer_version_fact }}": "{{ version_file_slurp['content'] | b64decode | trim }}"
+          tags:
+            - installer
+            - installer_version
+
+    - name: Set {{ __installer_version_name }} version fact to the default value
+      ansible.builtin.set_fact:
+        "{{ __installer_version_fact }}": false
+      when: not version_file_stat.stat.exists
+      tags:
+        - installer
+        - installer_version

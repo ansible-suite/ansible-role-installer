@@ -1,0 +1,34 @@
+- name: Determine the version to install
+  ansible.builtin.import_tasks: version.yml
+  vars:
+    __installer_version_name: installer
+    __installer_version_file: "{{ installer_installer_file }}"
+    __installer_version_var: installer_version
+    __installer_version_fact: __installer_version
+  tags:
+    - installer
+    - installer_facts
+    - installer_installer
+    - installer_version
+
+- name: Determine the installed version
+  ansible.builtin.import_tasks: version.yml
+  vars:
+    __installer_version_name: installed
+    __installer_version_file: "{{ installer_installed_file }}"
+    __installer_version_var: installer_installed_version
+    __installer_version_fact: __installer_installed_version
+  tags:
+    - installer
+    - installer_facts
+    - installer_installed
+    - installer_version
+
+- name: Determine whether to perform the installation
+  ansible.builtin.set_fact:
+    __installer_install: >-
+      {{ installer_force_install or __installer_installed_version == false
+      or (__installer_version and __installer_version != __installer_installed_version) }}
+  tags:
+    - installer
+    - installer_facts

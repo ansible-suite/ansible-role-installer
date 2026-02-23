@@ -1,0 +1,35 @@
+- name: Remove installed flag file
+  ansible.builtin.file:
+    path: "{{ installer_installed_file }}"
+    state: absent
+  tags:
+    - installer
+    - installer_installed_flag
+
+- name: Remove the target directory
+  ansible.builtin.file:
+    path: "{{ installer_target_remove_dir }}"
+    state: absent
+  when: installer_target_remove
+  tags:
+    - installer
+    - installer_target_remove
+
+- name: Include the installation tasks
+  ansible.builtin.include_role:
+    name:
+      "{{ installer_role | default(ansible_parent_role_names[1] | default(ansible_role_name) if installer_tasks is defined else ansible_role_name) }}"
+    tasks_from: "{{ installer_tasks | default('install_cmd.yml') }}"
+  tags:
+    - installer
+    - installer_install
+    - installer_tasks
+
+- name: Create installed flag file
+  ansible.builtin.template:
+    src: ansible_installed.j2
+    dest: "{{ installer_installed_file }}"
+    mode: '644'
+  tags:
+    - installer
+    - installer_installed_flag
