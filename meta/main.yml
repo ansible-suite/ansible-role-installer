@@ -1,3 +1,6 @@
 galaxy_info:
-  description: A helper role for idempotently installing software without a system package manager, such as expanding archives or using custom installers
   author: ansible-suite
+  role_name: installer
+  description: A helper role for idempotently installing software without a system package manager, such as expanding archives or using custom installers
+  license: MIT
+  min_ansible_version: "2.16"
