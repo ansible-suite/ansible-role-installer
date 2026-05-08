@@ -1,15 +1,15 @@
-- name: Set the {{ __installer_version_name }} version fact based on a variable
+- name: Set the {{ __installer_version_name }} version fact based on a variable # noqa: name[template]
   ansible.builtin.set_fact:
     "{{ __installer_version_fact }}": "{{ lookup('vars', __installer_version_var) }}"
-  when: lookup('vars', __installer_version_var) != false
+  when: lookup('vars', __installer_version_var) != false # noqa: literal-compare
   tags:
     - installer
     - installer_version
 
-- name: Determine the {{ __installer_version_name }} version from a file
+- name: Determine the {{ __installer_version_name }} version from a file # noqa: name[template]
   when: not lookup('vars', __installer_version_var)
   block:
-    - name: Check whether "{{ __installer_version_file }}" exists
+    - name: Check whether "{{ __installer_version_file }}" exists # noqa: name[template]
       ansible.builtin.stat:
         path: "{{ __installer_version_file }}"
       register: version_file_stat
@@ -17,7 +17,8 @@
         - installer
         - installer_version
 
-    - when: version_file_stat.stat.exists
+    - name: Read the version file
+      when: version_file_stat.stat.exists
       block:
         - name: Slurp the file "{{ __installer_version_file }}"
           ansible.builtin.slurp:
@@ -27,14 +28,14 @@
             - installer
             - installer_version
 
-        - name: Set the {{ __installer_version_name }} version fact based on the contents of the file
+        - name: Set the {{ __installer_version_name }} version fact based on the contents of the file # noqa: name[template]
           ansible.builtin.set_fact:
             "{{ __installer_version_fact }}": "{{ version_file_slurp['content'] | b64decode | trim }}"
           tags:
             - installer
             - installer_version
 
-    - name: Set {{ __installer_version_name }} version fact to the default value
+    - name: Set {{ __installer_version_name }} version fact to the default value # noqa: name[template]
       ansible.builtin.set_fact:
         "{{ __installer_version_fact }}": false
       when: not version_file_stat.stat.exists
