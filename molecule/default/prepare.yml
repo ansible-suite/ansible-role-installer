@@ -1,0 +1,9 @@
+- name: Prepare the system
+  hosts: all
+  become: true
+  tasks:
+    - name: Create the installer directory
+      ansible.builtin.file:
+        path: "/opt/installer"
+        state: directory
+        mode: '755'

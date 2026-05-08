@@ -1,0 +1,40 @@
+- name: Verify the 'installer' role result
+  hosts: all
+  tasks:
+    - name: Check /opt/installer-installed stat
+      ansible.builtin.stat:
+        name: /opt/installer-installed
+      register: target_dir_stat
+
+    - name: Assert /opt/installer-installed is a directory
+      ansible.builtin.assert:
+        that:
+          - target_dir_stat.stat.exists
+          - target_dir_stat.stat.isdir
+
+    - name: Check /opt/installer-installed/ansible_installed stat
+      ansible.builtin.stat:
+        name: /opt/installer-installed
+      register: installed_file_stat
+
+    - name: Check /opt/installer-installed/ansible_installed exists
+      ansible.builtin.assert:
+        that:
+          - installed_file_stat.stat.exists
+
+    - name: Slurp /opt/installer-installed/ansible_installed
+      ansible.builtin.slurp:
+        path: /opt/installer-installed/ansible_installed
+      register: installed_file_slurp
+
+    - name: Get the contents of /opt/installer-installed/ansible_installed
+      ansible.builtin.set_fact:
+        installed_file_contents: "{{ installed_file_slurp.content | b64decode }}"
+
+    - name: Print the contents of /opt/installer-installed/ansible_installed
+      ansible.builtin.debug:
+        var: installed_file_contents
+
+    - name: Assert that /opt/installer-installed/ansible_installed contains "2\n"
+      ansible.builtin.assert:
+        that: installed_file_contents == "2\n"

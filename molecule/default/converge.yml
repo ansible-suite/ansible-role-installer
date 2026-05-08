@@ -1,0 +1,19 @@
+- name: Test the 'installer' role
+  hosts: all
+  become: true
+  tasks:
+    - name: Perform the installation
+      loop:
+        - comment: "Initial version"
+          version: "1"
+        - comment: "Initial version idempotence test"
+          version: "1"
+        - comment: "Version update test"
+          version: "2"
+      ansible.builtin.include_role:
+        name: ansible-suite.installer
+      vars:
+        installer_source_dir: /opt/installer
+        installer_target_dir: /opt/installer-installed
+        installer_version: "{{ item.version }}"
+        installer_cmd: "mkdir -p {{ installer_target_dir | quote }}"
